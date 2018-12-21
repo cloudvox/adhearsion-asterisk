@@ -139,12 +139,12 @@ describe 'A mailbox definition' do
   it 'should not add a trailing comma when the email is left out' do
     mailbox.pin_number 1337
     mailbox.name "Jay Phillips"
-    mailbox.to_s.ends_with?(',').should be false
+    mailbox.to_s.end_with?(',').should be false
   end
 
   it 'should not add a trailing comma when the email and name is left out' do
     mailbox.pin_number 1337
-    mailbox.to_s.ends_with?(',').should be false
+    mailbox.to_s.end_with?(',').should be false
   end
 
 end
@@ -172,7 +172,7 @@ describe "A Voicemail context definition" do
 
   it 'its string representation should begin with a context declaration' do
     vm = Adhearsion::Asterisk::ConfigGenerator::Voicemail.new
-    vm.context("jay") {|_|}.to_s.starts_with?("[jay]").should be true
+    vm.context("jay") {|_|}.to_s.start_with?("[jay]").should be true
   end
 
 end
