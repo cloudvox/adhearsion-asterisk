@@ -17,10 +17,10 @@ module Adhearsion
       } unless defined? DYNAMIC_FEATURE_EXTENSIONS
 
       def agi(name, *params)
-        component = Punchblock::Component::Asterisk::AGI::Command.new :name => name, :params => params
+        component = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => name, :params => params
         execute_component_and_await_completion component
         complete_reason = component.complete_event.reason
-        raise Adhearsion::Call::Hangup if complete_reason.is_a?(Punchblock::Event::Complete::Hangup)
+        raise Adhearsion::Call::Hangup if complete_reason.is_a?(Adhearsion::Event::Complete::Hangup)
         [:code, :result, :data].map { |p| complete_reason.send p }
       end
 
@@ -417,7 +417,7 @@ module Adhearsion
       # careful handling immutable objects outside the scope. If you're unsure, don't use a block.
       #
       def generate_silence(&block)
-        component = Punchblock::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
+        component = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
         execute_component_and_await_completion component
         GenerateSilenceProxy.proxy_for(self, &block) if block_given?
       end

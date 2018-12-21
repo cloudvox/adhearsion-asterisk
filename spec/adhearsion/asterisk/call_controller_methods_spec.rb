@@ -12,16 +12,16 @@ module Adhearsion::Asterisk
 
       describe '#agi' do
         let :expected_agi_command do
-          Punchblock::Component::Asterisk::AGI::Command.new :name => 'Dial', :params => ['4044754842', 15]
+          Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => 'Dial', :params => ['4044754842', 15]
         end
 
         let :complete_event do
-          Punchblock::Event::Complete.new.tap do |c|
-            c.reason = Punchblock::Component::Asterisk::AGI::Command::Complete::Success.new :code => 200, :result => 1, :data => 'foobar'
+          Adhearsion::Event::Complete.new.tap do |c|
+            c.reason = Adhearsion::Rayo::Component::Asterisk::AGI::Command::Complete::Success.new :code => 200, :result => 1, :data => 'foobar'
           end
         end
 
-        before { Punchblock::Component::Asterisk::AGI::Command.any_instance.stub :complete_event => complete_event }
+        before { Adhearsion::Rayo::Component::Asterisk::AGI::Command.any_instance.stub :complete_event => complete_event }
 
         it 'should execute an AGI command with the specified name and parameters and return the response code, response and data' do
           subject.should_receive(:execute_component_and_await_completion).once.with expected_agi_command
@@ -31,8 +31,8 @@ module Adhearsion::Asterisk
 
         context 'when AGI terminates because of a hangup' do
           let :complete_event do
-            Punchblock::Event::Complete.new.tap do |c|
-              c.reason = Punchblock::Event::Complete::Hangup.new
+            Adhearsion::Event::Complete.new.tap do |c|
+              c.reason = Adhearsion::Event::Complete::Hangup.new
             end
           end
 
@@ -507,7 +507,7 @@ module Adhearsion::Asterisk
       describe '#generate_silence' do
         context 'executes Playtones with 0 as an argument if it' do
           before do
-            command = Punchblock::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
+            command = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
             @expect_command = subject.should_receive(:execute_component_and_await_completion).with(command)
           end
 
