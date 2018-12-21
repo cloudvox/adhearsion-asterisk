@@ -244,8 +244,8 @@ describe 'An expansive example of the Voicemail config generator' do
 
       voicemail.recordings do |config|
         config.format :wav # ONCE YOU PICK A FORMAT, NEVER CHANGE IT UNLESS YOU KNOW THE CONSEQUENCES!
-        config.allowed_length 3.seconds..5.minutes
-        config.maximum_silence 10.seconds
+        config.allowed_length 3..300 # 3.seconds..5.minutes
+        config.maximum_silence 10
         # config.silence_threshold 128 # wtf?
       end
 
