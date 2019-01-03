@@ -200,6 +200,10 @@ describe 'An expansive example of the Voicemail config generator' do
     ].map { |hash| OpenStruct.new(hash) }
   end
 
+  def strip_heredoc(str)
+    Adhearsion::Asterisk::ConfigGenerator::Voicemail.strip_heredoc(str)
+  end
+
   it 'a huge, brittle integration test' do
     vm = Adhearsion::Asterisk::ConfigGenerator::Voicemail.new do |voicemail|
       voicemail.context :default do |context|
@@ -254,7 +258,7 @@ describe 'An expansive example of the Voicemail config generator' do
         config.attach_recordings true
         config.command '/usr/sbin/sendmail -f alice@wonderland.com -t'
         config.subject "New voicemail for #{config[:name]}"
-        config.body <<-BODY.strip_heredoc
+        config.body strip_heredoc <<-BODY
           Dear #{config[:name]}:
 
           The caller #{config[:caller_id]} left you a #{config[:duration]} long voicemail
