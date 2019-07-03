@@ -14,3 +14,4 @@ matrix:
 notifications:
   irc: "irc.freenode.org#adhearsion"
 before_install: gem install --no-document bundler -v 1.17.3
+install: bundle _1.17.3_ install --jobs=3 --retry=3
