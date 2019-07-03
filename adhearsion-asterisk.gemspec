@@ -18,8 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency %q<adhearsion>, ["~> 2.5"]
-  s.add_runtime_dependency %q<jruby-openssl> if RUBY_PLATFORM == 'java'
+  s.add_runtime_dependency %q<adhearsion>, ["~> 3.0.0.beta"]
 
   s.add_development_dependency %q<bundler>, ["~> 1.0"]
   s.add_development_dependency %q<rspec>, ["~> 2.5"]
@@ -29,5 +28,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency %q<yard>, ["~> 0.6"]
   s.add_development_dependency %q<rake>, [">= 0"]
   s.add_development_dependency %q<guard-rspec>
-  s.add_development_dependency %q<ruby_gntp>
 end
