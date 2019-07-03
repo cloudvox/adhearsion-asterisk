@@ -403,7 +403,8 @@ module Adhearsion
       def play_tones(argument, wait = false)
         tones = [*argument].join(",")
         execute("Playtones", tones).tap do
-          sleep tones.scan(/(?<=\/)\d+/).map(&:to_i).reduce(0, :+).to_f / 1000 if wait
+          # sleep tones.scan(/(?<=\/)\d+/).map(&:to_i).reduce(0, :+).to_f / 1000 if wait # adhearsion:adhearsion-3
+          sleep tones.scan(/(?<=\/)\d+/).inject(0) { |sum, el| sum + el.to_i }.to_f / 1000 if wait # kares:ahn3
         end
       end
 

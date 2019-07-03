@@ -76,7 +76,7 @@ describe "The agents.conf config file agents" do
   end
 
   it "log_off_after_duration should generate autologoff" do
-    agents.log_off_after_duration 15
+    agents.log_off_after_duration 15 # 15.seconds
     generated_config_has_pair(:autologoff => "15").should be true
   end
 
@@ -96,8 +96,8 @@ describe "The agents.conf config file agents" do
   end
 
   it "time_between_calls should convert its argument to milliseconds" do
-    agents.time_between_calls 1*60*60
-    agents.agent_section.should == {:wrapuptime => 1*60*60 * 1_000}
+    agents.time_between_calls 3_600 # 1.hour in seconds
+    agents.agent_section.should == {:wrapuptime => 3_600_000} # 1.hour in milliseconds
   end
 
   it "hold_music_class should convert its argument to a String" do

@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 
   config.before do
-    allow(Adhearsion).to receive(:new_request_id).and_return SecureRandom.uuid
+    # allow(Adhearsion).to receive(:new_request_id).and_return SecureRandom.uuid # adhearsion:adhearsion-3
+    allow(Adhearsion).to receive(:new_request_id).and_return('12345678-aaaa-bbbb-cccc-123456789012') # kares:ahn3
   end
 end
