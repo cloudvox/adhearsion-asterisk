@@ -15,12 +15,13 @@ require 'adhearsion/asterisk'
 
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 
+SECURE_RANDOM_UUID = SecureRandom.uuid # e.g., '3ec2d104-60d6-4e76-b0d7-e13cd4065d5d'
+
 RSpec.configure do |config|
   config.filter_run :focus => true
   config.run_all_when_everything_filtered = true
 
   config.before do
-    # allow(Adhearsion).to receive(:new_request_id).and_return SecureRandom.uuid # adhearsion:adhearsion-3
-    allow(Adhearsion).to receive(:new_request_id).and_return('12345678-aaaa-bbbb-cccc-123456789012') # kares:ahn3
+    allow(Adhearsion).to receive(:new_request_id).and_return SECURE_RANDOM_UUID
   end
 end
