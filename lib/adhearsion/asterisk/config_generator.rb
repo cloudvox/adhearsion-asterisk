@@ -69,7 +69,7 @@ module Adhearsion
         options.each_pair do |key, value|
           search = !criteria.find { |criterion| criterion === value }.nil?
           unless search
-            msg = "Didn't recognize #{value.inspect}! Must be one of " + criteria.map(&:inspect).to_sentence
+            msg = "Didn't recognize #{value.inspect}! Must be one of " + to_sentence(criteria.map(&:inspect))
             raise ArgumentError, msg
           end
           cache[key] = [true, false].include?(value) ? boolean_to_yes_no(value) : value
@@ -81,7 +81,7 @@ module Adhearsion
         options.each_pair do |key, value|
           search = criteria.keys.find { |criterion| criterion === value }
           unless search
-            msg = "Didn't recognize #{value.inspect}! Must be one of " + criteria.keys.map(&:inspect).to_sentence
+            msg = "Didn't recognize #{value.inspect}! Must be one of " + to_sentence(criteria.keys.map(&:inspect))
             raise ArgumentError, msg
           end
           cache[key] = criteria[value]
@@ -95,6 +95,23 @@ module Adhearsion
           raise "#{boolean.inspect} is not true/false!"
         end
         boolean ? 'yes' : 'no'
+      end
+
+      def to_sentence(ary)
+        words_connector     = ', '
+        two_words_connector = ' and '
+        last_word_connector = ', and '
+
+        case ary.length
+        when 0
+          ''
+        when 1
+          ary[0].to_s.dup
+        when 2
+          "#{ary[0]}#{two_words_connector}#{ary[1]}"
+        else
+          "#{ary[0...-1].join(words_connector)}#{last_word_connector}#{ary[-1]}"
+        end
       end
 
     end

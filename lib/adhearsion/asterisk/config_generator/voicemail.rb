@@ -9,8 +9,14 @@ module Adhearsion
           :format => :wav
         }
 
+        def self.strip_heredoc(str)
+          indent = str.scan(/^[ \t]*(?=\S)/).min
+          indent = indent ? indent.size : 0
+          str.gsub(/^[ \t]{#{indent}}/, '')
+        end
+
         # Don't worry. These will be overridable soon.
-        STATIC_ZONEMESSAGES_CONTEXT = <<-ZONEMESSAGES.strip_heredoc
+        STATIC_ZONEMESSAGES_CONTEXT = strip_heredoc <<-ZONEMESSAGES
           [zonemessages]
           eastern=America/New_York|'vm-received' Q 'digits/at' IMp
           central=America/Chicago|'vm-received' Q 'digits/at' IMp
