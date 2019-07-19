@@ -431,8 +431,7 @@ module Adhearsion
       # careful handling immutable objects outside the scope. If you're unsure, don't use a block.
       #
       def generate_silence(&block)
-        component = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
-        execute_component_and_await_completion component
+        execute 'Playtones', '0'
         GenerateSilenceProxy.proxy_for(self, &block) if block_given?
       end
 

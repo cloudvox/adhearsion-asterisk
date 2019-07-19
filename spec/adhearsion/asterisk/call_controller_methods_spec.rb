@@ -516,8 +516,7 @@ module Adhearsion::Asterisk
       describe '#generate_silence' do
         context 'executes Playtones with 0 as an argument if it' do
           before do
-            command = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
-            @expect_command = subject.should_receive(:execute_component_and_await_completion).with(command)
+            @expect_command = subject.should_receive(:execute).once.with('Playtones', '0')
           end
 
           it 'is not given a block' do
