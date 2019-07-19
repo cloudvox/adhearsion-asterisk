@@ -17,11 +17,11 @@ module Adhearsion
       } unless defined? DYNAMIC_FEATURE_EXTENSIONS
 
       def agi(name, *params)
-        component = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => name, :params => params
-        execute_component_and_await_completion component
-        complete_reason = component.complete_event.reason
-        raise Adhearsion::Call::Hangup if complete_reason.is_a?(Adhearsion::Event::Complete::Hangup)
-        [:code, :result, :data].map { |p| complete_reason.send p }
+        connection = Adhearsion::Rayo::Initializer.connection
+        asterisk_call = connection.translator.call_with_id call.id
+        raise Adhearsion::Call::Hangup unless asterisk_call
+        event_hash = asterisk_call.execute_agi_command(name, *params) || raise(Adhearsion::Call::Hangup)
+        event_hash.fetch_values :code, :result, :data
       end
 
       #

@@ -1,5 +1,6 @@
 # develop
   * Feature: Add #sip_remove_header to complement #sip_add_header, to remove a specific header that was previously added
+  * Bugfix: Prevent quick Asterisk commands from hanging indefinitely by using supported `#execute_agi_command` in Adhearsion.
 
 # v1.5.1
   * Remove dependency on activesupport
