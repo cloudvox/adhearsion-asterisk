@@ -4,41 +4,43 @@ module Adhearsion::Asterisk
   describe CallControllerMethods do
     describe "mixed in to a CallController" do
 
-      let(:call) { double('Call') }
+      let(:call_id) { 'call-id-12345' }
+      let(:call) { double('Call', id: call_id) }
 
       subject { Adhearsion::CallController.new call }
 
       before { Adhearsion::CallController.mixin CallControllerMethods }
 
       describe '#agi' do
-        let :expected_agi_command do
-          Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => 'Dial', :params => ['4044754842', 15]
-        end
+        let(:expected_agi_command) { ['Dial', '4044754842', 15] }
+        let(:complete_result) { { :code => 200, :result => 1, :data => 'foobar' } }
+        let(:mock_asterisk_translator_call) { double 'Asterisk Translator Call', execute_agi_command: complete_result }
+        let(:mock_asterisk_translator) { double 'Asterisk Translator', call_with_id: mock_asterisk_translator_call }
+        let(:mock_client_connection) { double 'Rayo Client Connection', translator: mock_asterisk_translator }
 
-        let :complete_event do
-          Adhearsion::Event::Complete.new.tap do |c|
-            c.reason = Adhearsion::Rayo::Component::Asterisk::AGI::Command::Complete::Success.new :code => 200, :result => 1, :data => 'foobar'
-          end
-        end
-
-        before { Adhearsion::Rayo::Component::Asterisk::AGI::Command.any_instance.stub :complete_event => complete_event }
+        before { allow(Adhearsion::Rayo::Initializer).to receive(:connection).once.and_return mock_client_connection }
 
         it 'should execute an AGI command with the specified name and parameters and return the response code, response and data' do
-          subject.should_receive(:execute_component_and_await_completion).once.with expected_agi_command
+          mock_asterisk_translator_call.should_receive(:execute_agi_command).once.with(*expected_agi_command).and_return complete_result
           values = subject.agi 'Dial', '4044754842', 15
           values.should == [200, 1, 'foobar']
         end
 
         context 'when AGI terminates because of a hangup' do
-          let :complete_event do
-            Adhearsion::Event::Complete.new.tap do |c|
-              c.reason = Adhearsion::Event::Complete::Hangup.new
+          shared_examples 'honoring a Hangup' do
+            it 'should raise Adhearsion::Call::Hangup' do
+              lambda { subject.agi 'Dial', '4044754842', 15 }.should raise_error(Adhearsion::Call::Hangup)
             end
           end
 
-          it 'should raise Adhearsion::Call::Hangup' do
-            subject.should_receive(:execute_component_and_await_completion).once.with expected_agi_command
-            lambda { subject.agi 'Dial', '4044754842', 15 }.should raise_error(Adhearsion::Call::Hangup)
+          context 'when #execute_agi_command raises a Hangup' do
+            before { mock_asterisk_translator_call.should_receive(:execute_agi_command).once.with(*expected_agi_command).and_raise Adhearsion::Call::Hangup }
+            it_behaves_like 'honoring a Hangup'
+          end
+
+          context 'when #execute_agi_command returns nil' do
+            before { mock_asterisk_translator_call.should_receive(:execute_agi_command).once.with(*expected_agi_command).and_return nil }
+            it_behaves_like 'honoring a Hangup'
           end
         end
       end
@@ -514,8 +516,7 @@ module Adhearsion::Asterisk
       describe '#generate_silence' do
         context 'executes Playtones with 0 as an argument if it' do
           before do
-            command = Adhearsion::Rayo::Component::Asterisk::AGI::Command.new :name => "EXEC Playtones", :params => ["0"]
-            @expect_command = subject.should_receive(:execute_component_and_await_completion).with(command)
+            @expect_command = subject.should_receive(:execute).once.with('Playtones', '0')
           end
 
           it 'is not given a block' do
