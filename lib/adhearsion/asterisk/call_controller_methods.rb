@@ -20,7 +20,11 @@ module Adhearsion
         connection = Adhearsion::Rayo::Initializer.connection
         asterisk_call = connection.translator.call_with_id call.id
         raise Adhearsion::Call::Hangup unless asterisk_call
-        event_hash = asterisk_call.execute_agi_command(name, *params) || raise(Adhearsion::Call::Hangup)
+        begin
+          event_hash = asterisk_call.execute_agi_command(name, *params) || raise(Adhearsion::Call::Hangup)
+        rescue Adhearsion::Translator::Asterisk::ChannelGoneError
+          raise Adhearsion::Call::Hangup
+        end
         event_hash.fetch_values :code, :result, :data
       end
 

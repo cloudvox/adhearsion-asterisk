@@ -38,6 +38,11 @@ module Adhearsion::Asterisk
             it_behaves_like 'honoring a Hangup'
           end
 
+          context 'when #execute_agi_command raises a ChannelGoneError' do
+            before { mock_asterisk_translator_call.should_receive(:execute_agi_command).once.with(*expected_agi_command).and_raise Adhearsion::Translator::Asterisk::ChannelGoneError }
+            it_behaves_like 'honoring a Hangup'
+          end
+
           context 'when #execute_agi_command returns nil' do
             before { mock_asterisk_translator_call.should_receive(:execute_agi_command).once.with(*expected_agi_command).and_return nil }
             it_behaves_like 'honoring a Hangup'
